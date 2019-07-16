@@ -10,4 +10,4 @@
             credentials { username authToken }
         }
 
-     implementation 'com.github.muyishuangfeng:LTGameSDKGooglePlay-Android:1.0.1'
+     implementation 'com.github.muyishuangfeng:LTGameSDKGooglePlay-Android:1.0.2'
