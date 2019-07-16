@@ -9,8 +9,10 @@ import com.gentop.ltgame.ltgamegoogleplay.util.IabHelper;
 import com.gentop.ltgame.ltgamegoogleplay.util.IabResult;
 import com.gentop.ltgame.ltgamegoogleplay.util.Inventory;
 import com.gentop.ltgame.ltgamegoogleplay.util.Purchase;
+import com.gentop.ltgame.ltgamenet.base.Constants;
 import com.gentop.ltgame.ltgamenet.manager.LoginRealizeManager;
 import com.gentop.ltgame.ltgamenet.model.GoogleModel;
+import com.gentop.ltgame.ltgamenet.util.PreferencesUtils;
 import com.gentop.ltgame.ltgamesdkcore.common.Target;
 import com.gentop.ltgame.ltgamesdkcore.impl.OnRechargeListener;
 import com.gentop.ltgame.ltgamesdkcore.model.RechargeResult;
@@ -132,9 +134,14 @@ class GooglePlayHelper {
     /**
      * 购买
      */
-   private void recharge() {
+    private void recharge() {
         if (mSetupDone) {
-            getLTOrderID(mParams);
+            if (!TextUtils.isEmpty(PreferencesUtils.getString(mActivityRef.get(),
+                    Constants.USER_API_TOKEN))) {
+                getLTOrderID(mParams);
+            } else {
+                mListener.onState(mActivityRef.get(), RechargeResult.failOf("order create failed:user token is empty"));
+            }
         } else {
             if (!TextUtils.isEmpty(mPublicKey)) {
                 //创建谷歌帮助类
