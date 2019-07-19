@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.gentop.ltgame.ltgamegoogleplay.util;
+package com.sdk.ltgame.ltgoogleplay.util;
 
 /**
  * Exception thrown when something went wrong with in-app billing.

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.gentop.ltgame.ltgamegoogleplay.util;
+package com.sdk.ltgame.ltgoogleplay.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,10 +1,10 @@
-package com.gentop.ltgame.ltgamegoogleplay;
+package com.sdk.ltgame.ltgoogleplay;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.gentop.ltgame.ltgamegoogleplay.uikit.GooglePlayActivity;
+import com.sdk.ltgame.ltgoogleplay.uikit.GooglePlayActivity;
 import com.gentop.ltgame.ltgamesdkcore.common.LTGameOptions;
 import com.gentop.ltgame.ltgamesdkcore.common.LTGameSdk;
 import com.gentop.ltgame.ltgamesdkcore.common.Target;

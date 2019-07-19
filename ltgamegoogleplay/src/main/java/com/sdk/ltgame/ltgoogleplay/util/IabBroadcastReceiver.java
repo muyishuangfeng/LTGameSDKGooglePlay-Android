@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.gentop.ltgame.ltgamegoogleplay.util;
+package com.sdk.ltgame.ltgoogleplay.util;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
