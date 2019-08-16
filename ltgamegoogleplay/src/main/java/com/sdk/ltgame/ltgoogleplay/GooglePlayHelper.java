@@ -78,44 +78,43 @@ class GooglePlayHelper {
         //创建谷歌帮助类
         mHelper = new IabHelper(mActivityRef.get(), mPublicKey);
         mHelper.enableDebugLogging(true);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            @Override
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    mListener.onState(mActivityRef.get(), RechargeResult.failOf(LTGameError.make(result.getMessage())));
-                    mSetupDone = false;
-                } else {
-                    mSetupDone = true;
-                    try {
-                        mHelper.queryInventoryAsync(true, null, null,
-                                new IabHelper.QueryInventoryFinishedListener() {
-                                    @Override
-                                    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-                                        if (result.isSuccess()) {
-                                            if (inv.getAllPurchases() != null) {
-                                                if (inv.getAllPurchases().size() > 0) {
-                                                    mGoodsList = getGoodsList(inv.getAllPurchases());
-                                                    for (int i = 0; i < inv.getAllPurchases().size(); i++) {
-                                                        consumeProduct(inv.getAllPurchases().get(i));
+        if (mHelper != null) {
+            mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                @Override
+                public void onIabSetupFinished(IabResult result) {
+                    if (!result.isSuccess()) {
+                        mSetupDone = false;
+                    } else {
+                        mSetupDone = true;
+                        try {
+                            mHelper.queryInventoryAsync(true, null, null,
+                                    new IabHelper.QueryInventoryFinishedListener() {
+                                        @Override
+                                        public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                                            if (result.isSuccess()) {
+                                                if (inv.getAllPurchases() != null) {
+                                                    if (inv.getAllPurchases().size() > 0) {
+                                                        mGoodsList = getGoodsList(inv.getAllPurchases());
+                                                        for (int i = 0; i < inv.getAllPurchases().size(); i++) {
+                                                            consumeProduct(inv.getAllPurchases().get(i));
+                                                        }
+                                                    } else {
+                                                        recharge();
                                                     }
-                                                } else {
-                                                    recharge();
+
                                                 }
 
                                             }
-
                                         }
-                                    }
 
-                                });
-                    } catch (IabHelper.IabAsyncInProgressException e) {
-                        e.printStackTrace();
+                                    });
+                        } catch (IabHelper.IabAsyncInProgressException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
-
-
+            });
+        }
     }
 
     /**
@@ -204,7 +203,7 @@ class GooglePlayHelper {
                                         e.printStackTrace();
                                     }
                                 }
-                            }else {
+                            } else {
                                 mListener.onState(mActivityRef.get(), RechargeResult.failOf(result.getResultModel().getMsg()));
                             }
 
