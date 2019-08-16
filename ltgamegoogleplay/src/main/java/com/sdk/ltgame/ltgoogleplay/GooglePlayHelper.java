@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.gentop.ltgame.ltgamesdkcore.exception.LTGameError;
 import com.sdk.ltgame.ltgoogleplay.util.IabHelper;
 import com.sdk.ltgame.ltgoogleplay.util.IabResult;
 import com.sdk.ltgame.ltgoogleplay.util.Inventory;
@@ -81,6 +82,7 @@ class GooglePlayHelper {
             @Override
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
+                    mListener.onState(mActivityRef.get(),RechargeResult.failOf(LTGameError.make(result.getMessage())));
                     mSetupDone = false;
                 } else {
                     mSetupDone = true;
