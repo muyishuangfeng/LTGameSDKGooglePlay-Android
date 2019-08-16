@@ -82,7 +82,7 @@ class GooglePlayHelper {
             @Override
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
-                    mListener.onState(mActivityRef.get(),RechargeResult.failOf(LTGameError.make(result.getMessage())));
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf(LTGameError.make(result.getMessage())));
                     mSetupDone = false;
                 } else {
                     mSetupDone = true;
@@ -177,30 +177,39 @@ class GooglePlayHelper {
             @Override
             public void onState(Activity activity, RechargeResult result) {
                 if (result != null) {
-                    Log.e(TAG, result.getResultModel().getData().getLt_order_id());
                     if (result.getResultModel() != null) {
-                        mOrderID = result.getResultModel().getData().getLt_order_id();
-                        try {
-                            if (mHelper == null) return;
-                            mHelper.queryInventoryAsync(true, mGoodsList, mGoodsList,
-                                    new IabHelper.QueryInventoryFinishedListener() {
-                                        @Override
-                                        public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-                                            if (result != null) {
-                                                if (result.isSuccess() && inv.hasPurchase(mSku)) {
-                                                    //消费, 并下一步, 这里Demo里面我没做提示,将购买了,但是没消费掉的商品直接消费掉, 正常应该
-                                                    //给用户一个提示,存在未完成的支付订单,是否完成支付
-                                                    consumeProduct(inv.getPurchase(mSku));
-                                                } else {
-                                                    getProduct(mRequestCode, mSku);
-                                                }
-                                            }
-                                        }
+                        if (result.getResultModel().getData() != null) {
+                            if (!result.getResultModel().getResult().equals("NO")) {
+                                if (result.getResultModel().getData().getLt_order_id() != null) {
+                                    mOrderID = result.getResultModel().getData().getLt_order_id();
+                                    try {
+                                        if (mHelper == null) return;
+                                        mHelper.queryInventoryAsync(true, mGoodsList, mGoodsList,
+                                                new IabHelper.QueryInventoryFinishedListener() {
+                                                    @Override
+                                                    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                                                        if (result != null) {
+                                                            if (result.isSuccess() && inv.hasPurchase(mSku)) {
+                                                                //消费, 并下一步, 这里Demo里面我没做提示,将购买了,但是没消费掉的商品直接消费掉, 正常应该
+                                                                //给用户一个提示,存在未完成的支付订单,是否完成支付
+                                                                consumeProduct(inv.getPurchase(mSku));
+                                                            } else {
+                                                                getProduct(mRequestCode, mSku);
+                                                            }
+                                                        }
+                                                    }
 
-                                    });
-                        } catch (IabHelper.IabAsyncInProgressException e) {
-                            e.printStackTrace();
+                                                });
+                                    } catch (IabHelper.IabAsyncInProgressException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else {
+                                mListener.onState(mActivityRef.get(), RechargeResult.failOf(result.getResultModel().getMsg()));
+                            }
+
                         }
+
                     }
                 }
             }
