@@ -125,6 +125,23 @@ class GooglePlayHelper {
             mHelper.consumeAsync(purchase, new IabHelper.OnConsumeFinishedListener() {
                 @Override
                 public void onConsumeFinished(Purchase purchase, IabResult result) {
+                    if (purchase.getToken() != null && purchase.getDeveloperPayload() != null) {
+                        uploadToServer2(purchase.getToken(), purchase.getDeveloperPayload());
+                    }
+                }
+            });
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 消费掉商品
+     */
+    private void consumeProduct2(Purchase purchase) {
+        try {
+            mHelper.consumeAsync(purchase, new IabHelper.OnConsumeFinishedListener() {
+                @Override
+                public void onConsumeFinished(Purchase purchase, IabResult result) {
                 }
             });
         } catch (IabHelper.IabAsyncInProgressException e) {
@@ -300,7 +317,7 @@ class GooglePlayHelper {
                                                                         if (result.isSuccess() && inv.hasPurchase(productID)) {
                                                                             //消费, 并下一步, 这里Demo里面我没做提示,将购买了,但是没消费掉的商品直接消费掉, 正常应该
                                                                             //给用户一个提示,存在未完成的支付订单,是否完成支付
-                                                                            consumeProduct(inv.getPurchase(productID));
+                                                                            consumeProduct2(inv.getPurchase(productID));
                                                                         }
                                                                     }
                                                                 }
@@ -314,6 +331,25 @@ class GooglePlayHelper {
                                     });
                                 }
 
+                            }
+                        }
+
+                    }
+
+                });
+    }
+    /**
+     * 补单
+     */
+    private void uploadToServer2(final String purchaseToken, final String productID) {
+        LoginRealizeManager.googlePlay(mActivityRef.get(),
+                purchaseToken, mOrderID, mPayTest, new OnRechargeListener() {
+
+                    @Override
+                    public void onState(Activity activity, RechargeResult result) {
+                        if (result != null) {
+                            if (result.getResultModel().getCode() == 200) {
+                                recharge();
                             }
                         }
 
