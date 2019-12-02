@@ -62,7 +62,7 @@ public class GooglePlayPlatform extends AbsPlatform {
         public IPlatform create(Context context, int target) {
             IPlatform platform = null;
             LTGameOptions options = LTGameSdk.options();
-            if (!LTGameUtil.isAnyEmpty(options.getLtAppId(), options.getLtAppKey(), options.getBaseUrl(),
+            if (!LTGameUtil.isAnyEmpty(options.getLtAppId(), options.getLtAppKey(),
                     options.getSku(), options.getGoodsID(), options.getmPublicKey()) && options.getmParams() != null &&
                     options.getmPayTest() != -1 && options.getSelfRequestCode() != -1) {
                 platform = new GooglePlayPlatform(context, options.getLtAppId(), options.getLtAppKey(),
