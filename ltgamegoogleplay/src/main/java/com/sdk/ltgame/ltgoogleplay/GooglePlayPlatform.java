@@ -31,8 +31,7 @@ public class GooglePlayPlatform extends AbsPlatform {
     @Override
     public void recharge(Activity activity, int target, RechargeObject object, OnRechargeListener listener) {
         mHelper = new GooglePlayHelper(activity, object.getPublicKey(), object.getPayTest(), object.getSku(),
-                object.getGoodsID(),
-                object.getSelfRequestCode(), object.getParams(), listener);
+                object.getGoodsID(), object.getSelfRequestCode(), object.getParams(), listener);
         mHelper.init();
     }
 
