@@ -134,6 +134,7 @@ class GooglePlayHelper {
             e.printStackTrace();
         }
     }
+
     /**
      * 消费掉商品
      */
@@ -278,12 +279,49 @@ class GooglePlayHelper {
             //订单信息
             String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
             String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-            if (!TextUtils.isEmpty(purchaseData)) {
-                GoogleModel googleModel = new Gson().fromJson(purchaseData, GoogleModel.class);
-                Map<String, Object> params = new WeakHashMap<>();
-                params.put("purchase_token", googleModel.getPurchaseToken());
-                params.put("lt_order_id", mOrderID);
-                uploadToServer(googleModel.getPurchaseToken(), mSku);
+            switch (responseCode) {
+                case 0: {//成功
+                    if (!TextUtils.isEmpty(purchaseData)) {
+                        GoogleModel googleModel = new Gson().fromJson(purchaseData, GoogleModel.class);
+                        Map<String, Object> params = new WeakHashMap<>();
+                        params.put("purchase_token", googleModel.getPurchaseToken());
+                        params.put("lt_order_id", mOrderID);
+                        uploadToServer(googleModel.getPurchaseToken(), mSku);
+                    }
+                }
+                break;
+                case 1: {//取消
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("1"));
+                }
+                break;
+                case 2: {//网络异常
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("2"));
+                }
+                break;
+                case 3: {//不支持购买
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("3"));
+                }
+                break;
+                case 4: {//商品不可购买
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("4"));
+                }
+                break;
+                case 5: {//提供给 API 的无效参数
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("5"));
+                }
+                break;
+                case 6: {//错误
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("6"));
+                }
+                break;
+                case 7: {//未消耗掉
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("7"));
+                }
+                break;
+                case 8: {//不可购买
+                    mListener.onState(mActivityRef.get(), RechargeResult.failOf("8"));
+                }
+                break;
             }
         }
 
@@ -338,6 +376,7 @@ class GooglePlayHelper {
 
                 });
     }
+
     /**
      * 补单
      */
