@@ -337,39 +337,42 @@ class GooglePlayHelper {
                     @Override
                     public void onState(Activity activity, RechargeResult result) {
                         if (result != null) {
-                            if (result.getResultModel().getCode() == 200) {
-                                mListener.onState(mActivityRef.get(), RechargeResult.successOf(result.getResultModel()));
-                                if (mHelper == null) {
-                                    mHelper = new IabHelper(mActivityRef.get(), mPublicKey);
-                                    mHelper.enableDebugLogging(true);
-                                    mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-                                        @Override
-                                        public void onIabSetupFinished(IabResult result) {
-                                            if (result.isSuccess()) {
-                                                try {
-                                                    mHelper.queryInventoryAsync(true, mGoodsList, mGoodsList,
-                                                            new IabHelper.QueryInventoryFinishedListener() {
-                                                                @Override
-                                                                public void onQueryInventoryFinished(IabResult result, Inventory inv) {
-                                                                    if (result != null) {
-                                                                        if (result.isSuccess() && inv.hasPurchase(productID)) {
-                                                                            //消费, 并下一步, 这里Demo里面我没做提示,将购买了,但是没消费掉的商品直接消费掉, 正常应该
-                                                                            //给用户一个提示,存在未完成的支付订单,是否完成支付
-                                                                            consumeProduct2(inv.getPurchase(productID));
+                            if (result.getResultModel() != null) {
+                                if (result.getResultModel().getCode() == 200) {
+                                    mListener.onState(mActivityRef.get(), RechargeResult.successOf(result.getResultModel()));
+                                    if (mHelper == null) {
+                                        mHelper = new IabHelper(mActivityRef.get(), mPublicKey);
+                                        mHelper.enableDebugLogging(true);
+                                        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                                            @Override
+                                            public void onIabSetupFinished(IabResult result) {
+                                                if (result.isSuccess()) {
+                                                    try {
+                                                        mHelper.queryInventoryAsync(true, mGoodsList, mGoodsList,
+                                                                new IabHelper.QueryInventoryFinishedListener() {
+                                                                    @Override
+                                                                    public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                                                                        if (result != null) {
+                                                                            if (result.isSuccess() && inv.hasPurchase(productID)) {
+                                                                                //消费, 并下一步, 这里Demo里面我没做提示,将购买了,但是没消费掉的商品直接消费掉, 正常应该
+                                                                                //给用户一个提示,存在未完成的支付订单,是否完成支付
+                                                                                consumeProduct2(inv.getPurchase(productID));
+                                                                            }
                                                                         }
                                                                     }
-                                                                }
 
-                                                            });
-                                                } catch (IabHelper.IabAsyncInProgressException e) {
-                                                    e.printStackTrace();
+                                                                });
+                                                    } catch (IabHelper.IabAsyncInProgressException e) {
+                                                        e.printStackTrace();
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
-                                }
+                                        });
+                                    }
 
+                                }
                             }
+
                         }
 
                     }
