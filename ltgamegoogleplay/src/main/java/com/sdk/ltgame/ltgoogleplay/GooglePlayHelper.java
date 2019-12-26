@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-class GooglePlayHelper {
+public class GooglePlayHelper {
 
     private static final String TAG = GooglePlayHelper.class.getSimpleName();
     private static IabHelper mHelper;
@@ -65,11 +65,58 @@ class GooglePlayHelper {
         this.mListener = mListener;
     }
 
-    GooglePlayHelper(Activity activity, String mPublicKey) {
+    public GooglePlayHelper(Activity activity, String mPublicKey) {
         this.mActivityRef = new WeakReference<>(activity);
         this.mPublicKey = mPublicKey;
         this.mRechargeTarget = Target.RECHARGE_GOOGLE;
     }
+
+
+    /**
+     * 补单操作
+     */
+    public void queryOrder() {
+        //创建谷歌帮助类
+        mHelper = new IabHelper(mActivityRef.get(), mPublicKey);
+        mHelper.enableDebugLogging(true);
+        if (mHelper != null) {
+            mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                @Override
+                public void onIabSetupFinished(IabResult result) {
+                    if (result.isSuccess()) {
+                        try {
+                            mHelper.queryInventoryAsync(true, null, null,
+                                    new IabHelper.QueryInventoryFinishedListener() {
+                                        @Override
+                                        public void onQueryInventoryFinished(IabResult result, Inventory inv) {
+                                            if (result.isSuccess()) {
+                                                if (inv.getAllPurchases() != null) {
+                                                    if (inv.getAllPurchases().size() > 0) {
+                                                        for (int i = 0; i < inv.getAllPurchases().size(); i++) {
+                                                            if (inv.getAllPurchases().get(i).getToken() != null && inv.getAllPurchases().get(i).getDeveloperPayload() != null) {
+                                                                uploadToServer3(inv.getAllPurchases().get(i), inv.getAllPurchases().get(i).getToken(), inv.getAllPurchases().get(i).getDeveloperPayload());
+                                                            }
+
+                                                        }
+                                                    }
+
+                                                }
+
+                                            }
+                                        }
+
+                                    });
+                        } catch (IabHelper.IabAsyncInProgressException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+
 
     /**
      * 初始化
@@ -422,4 +469,23 @@ class GooglePlayHelper {
         return mGoodsList;
     }
 
+
+    /**
+     * 上传到服务器验证
+     */
+    private void uploadToServer3(final Purchase purchase, final String purchaseToken, String mOrderID) {
+        LoginRealizeManager.googlePlay(mActivityRef.get(),
+                purchaseToken, mOrderID, mPayTest, new OnRechargeListener() {
+                    @Override
+                    public void onState(Activity activity, RechargeResult result) {
+                        if (result != null) {
+                            if (result.getResultModel().getCode() == 200) {
+                                consumeProduct2(purchase);
+                            }
+                        }
+
+                    }
+
+                });
+    }
 }
