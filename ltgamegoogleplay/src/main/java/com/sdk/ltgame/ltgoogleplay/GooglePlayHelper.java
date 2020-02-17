@@ -270,6 +270,7 @@ public class GooglePlayHelper {
                                 }
                             } else {
                                 mListener.onState(mActivityRef.get(), RechargeResult.failOf(result.getResultModel().getMsg()));
+                                activity.finish();
                             }
 
                         }
