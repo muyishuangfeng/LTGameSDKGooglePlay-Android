@@ -23,9 +23,9 @@ public class GooglePlayPlatform extends AbsPlatform {
     private GooglePlayHelper mHelper;
 
 
-    private GooglePlayPlatform(Context context, String appId, String appKey, int payTest, String publicKey,
-                               int selfRequestCode, String sku, String productID,Map<String, Object> params, int target) {
-        super(context, appId, appKey, payTest, publicKey, selfRequestCode, sku,productID, params, target);
+    private GooglePlayPlatform(Context context,boolean isServerTest, String appId, String appKey,
+                               String adID, String packageID,int target) {
+        super(context, isServerTest,appId, appKey, adID,packageID,target);
     }
 
     @Override
@@ -61,12 +61,10 @@ public class GooglePlayPlatform extends AbsPlatform {
         public IPlatform create(Context context, int target) {
             IPlatform platform = null;
             LTGameOptions options = LTGameSdk.options();
-            if (!LTGameUtil.isAnyEmpty(options.getLtAppId(), options.getLtAppKey(),
-                    options.getSku(), options.getGoodsID(), options.getmPublicKey()) && options.getmParams() != null &&
-                    options.getmPayTest() != -1 && options.getSelfRequestCode() != -1) {
-                platform = new GooglePlayPlatform(context, options.getLtAppId(), options.getLtAppKey(),
-                        options.getmPayTest(), options.getmPublicKey(), options.getSelfRequestCode(),
-                        options.getSku(),options.getGoodsID(), options.getmParams(), target);
+            if (!LTGameUtil.isAnyEmpty(options.getLtAppId(), options.getLtAppKey())) {
+                platform = new GooglePlayPlatform(context, options.getISServerTest(),
+                        options.getLtAppId(), options.getLtAppKey(),options.getAdID(),
+                        options.getPackageID(), target);
             }
             return platform;
         }
