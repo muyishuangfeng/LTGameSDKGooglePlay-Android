@@ -207,6 +207,7 @@ public class GooglePlayHelper {
                 getLTOrderID(mParams);
             } else {
                 mListener.onState(mActivityRef.get(), RechargeResult.failOf("order create failed:user token is empty"));
+                mActivityRef.get().finish();
             }
         } else {
             if (!TextUtils.isEmpty(mPublicKey)) {
@@ -269,7 +270,10 @@ public class GooglePlayHelper {
                                     }
                                 }
                             } else {
-                                mListener.onState(mActivityRef.get(), RechargeResult.failOf(result.getResultModel().getMsg()));
+                                mListener.onState(mActivityRef.get(),
+                                        RechargeResult.failOf(result.getResultModel().getMsg()));
+                                mActivityRef.get().finish();
+                                activity.finish();
                             }
 
                         }
